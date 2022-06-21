@@ -47,8 +47,7 @@ public class soundManager : MonoBehaviour
         MusicVolumeChanged(backGroundAudioVolume);
         SoundVolumeChanged(soundeffectVolume);
         SceneManager.LoadScene(1);
-        ScoreAPI.GameStart((bool s) => {
-        });
+        
     }
 
     // Update is called once per frame

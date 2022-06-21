@@ -100,6 +100,8 @@ public class GameManager : MonoBehaviour
         slowmo = false;
         powerUpScreen.gameObject.SetActive(false);
         canSpawn = true;
+        ScoreAPI.GameStart((bool s) => {
+        });
     }
 
     private void Update()
