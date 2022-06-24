@@ -9,10 +9,13 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
     public List<UIPanel> uiPanels;
+    public GameObject playCircle;
 
     public UIPanel activeUIPanel;
-    public Slider soundSlider;
-    public Slider musicSlider;
+    public GameObject soundBtn;
+    public GameObject musicBtn; 
+    public GameObject pausesoundBtn;
+    public GameObject pausemusicBtn;
 
     public Canvas effectCanvas;
 
@@ -36,19 +39,55 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         SwitchCanvas(uiPanels[0].uiPanelType);
-        soundSlider.value = soundManager.instance.soundeffectVolume;
-        musicSlider.value = soundManager.instance.backGroundAudioVolume;
-        OnMusicVolumeChanged();
-        OnSoundVolumeChanged();
-        soundSlider.onValueChanged.AddListener(delegate { OnSoundVolumeChanged(); });
-        musicSlider.onValueChanged.AddListener(delegate { OnMusicVolumeChanged(); });
         if (activeUIPanel.uiPanelType == UIPanelType.mainmenu)
         {
             
             GetHighScore();
         }
         soundManager.instance.PlaySound(SoundType.backgroundSound);
-        
+        if(soundManager.instance.backGroundAudioVolume == 0)
+        {
+            EnableDisableMusicBtns(musicBtn, pausemusicBtn, 0.5f);
+        }
+        else
+        {
+            EnableDisableMusicBtns(musicBtn, pausemusicBtn, 1f);
+        }
+
+        if (soundManager.instance.soundeffectVolume == 0)
+        {
+            EnableDisableMusicBtns(soundBtn, pausesoundBtn, 0.5f);
+        }
+        else
+        {
+            EnableDisableMusicBtns(soundBtn, pausesoundBtn, 1f);
+            
+        }
+
+    }
+    private void Update()
+    {
+        if(playCircle != null)
+        {
+            playCircle.transform.Rotate(new Vector3(0, 0, -10 * Time.deltaTime));
+        }
+    }
+
+    private void EnableDisableMusicBtns(GameObject MainGameBTN,GameObject pauseMenuBTN,float alphaVAlue)
+    {
+        MainGameBTN.GetComponent<Image>().color = new Color(
+                MainGameBTN.GetComponent<Image>().color.r,
+                MainGameBTN.GetComponent<Image>().color.g,
+                MainGameBTN.GetComponent<Image>().color.b,
+                alphaVAlue);
+
+        if (pauseMenuBTN == null)
+            return;
+        pauseMenuBTN.GetComponent<Image>().color = new Color(
+                pauseMenuBTN.GetComponent<Image>().color.r,
+                pauseMenuBTN.GetComponent<Image>().color.g,
+                pauseMenuBTN.GetComponent<Image>().color.b,
+                alphaVAlue);
     }
     void GetHighScore()
     {
@@ -89,22 +128,41 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void OnMusicVolumeChanged()
+    public void OnMusicBTNClickded()
     {
+        if(musicBtn.GetComponent<Image>().color.a == 1)
+        {
+            EnableDisableMusicBtns(musicBtn, pausemusicBtn, 0.5f);
 
-        soundManager.instance.MusicVolumeChanged(musicSlider.value);
-        soundManager.instance.SaveMusicVoulme(musicSlider.value);
+
+            soundManager.instance.MusicVolumeChanged(0);
+        }
+        else
+        {
+            EnableDisableMusicBtns(musicBtn, pausemusicBtn, 1f);
+
+            soundManager.instance.MusicVolumeChanged(1);
+        }
     }
 
-    public void OnSoundVolumeChanged()
+    public void OnSoundBTNClickded()
     {
-        soundManager.instance.SoundVolumeChanged(soundSlider.value);
-        soundManager.instance.SaveSoundVoulme(soundSlider.value);
+        if (soundBtn.GetComponent<Image>().color.a == 1)
+        {
+            EnableDisableMusicBtns(soundBtn, pausesoundBtn, 0.5f);
+
+            soundManager.instance.SoundVolumeChanged(0);
+        }
+        else
+        {
+            EnableDisableMusicBtns(soundBtn, pausesoundBtn, 1f);
+            soundManager.instance.SoundVolumeChanged(1);
+        }
     }
 
     public void ShowCombo(Vector3 pos,int combotext)
     {
-        StopAllCoroutines();
+        StopCoroutine("AutoDisableCombo");
         if(comboSpwaned==null)
             comboSpwaned = Instantiate(ComboObjPrefab, effectCanvas.transform);
         EnableCombo();

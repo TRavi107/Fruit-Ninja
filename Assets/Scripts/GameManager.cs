@@ -44,14 +44,14 @@ public class GameManager : MonoBehaviour
     public GameObject[] splashEffects;
 
     [Header("UI Texts")]
-    public TMP_Text scoreText;
-    public TMP_Text fruitsCutText;
-    public TMP_Text GameOverScoreText;
-    public TMP_Text MaxComboText;
-    public TMP_Text GameOverhighscoreText;
-    public TMP_Text gamePlayhighscoreText;
+    public TMP_Text pausefruitsCutText;
     public TMP_Text pausehighscoreText;
-    public TMP_Text congratulationText;
+    public TMP_Text pauseScoreText;
+    public TMP_Text GameOverScoreText;
+    public TMP_Text GameOverhighscoreText;
+    public TMP_Text GameOverFruitsCutText;
+    public TMP_Text scoreText;
+    public TMP_Text gamePlayhighscoreText;
 
     public List<GameObject> lifesPrefab;
 
@@ -127,6 +127,8 @@ public class GameManager : MonoBehaviour
         int min = (int)gameTimer / 60;
         int sec = (int)gameTimer % 60;
         pauseMenugameTimerText.text = min.ToString() + ":" + sec.ToString();
+        pauseScoreText.text = score.ToString();
+        pausefruitsCutText.text =":"+fruitscut.ToString();
         Time.timeScale = 0;
         paused = true;
     }
@@ -324,9 +326,8 @@ public class GameManager : MonoBehaviour
     {
         UIManager.instance.SwitchCanvas(UIPanelType.GameOver);
         PauseGame();
-        fruitsCutText.text = "Fruits Cut :  " + fruitscut.ToString();
-        GameOverScoreText.text = "Score:          " + score.ToString();
-        MaxComboText.text = "Max Combo:  " + maxCombo.ToString();
+        GameOverFruitsCutText.text =":"+fruitscut.ToString();
+        GameOverScoreText.text = score.ToString();
         int playTime =(int)Time.unscaledTime - startTime;
         ScoreAPI.SubmitScore(score,playTime, (bool s, string msg) => { });
         GetHighScore();
@@ -339,13 +340,12 @@ public class GameManager : MonoBehaviour
             {
                 if (score >= d.high_score)
                 {
-                    GameOverhighscoreText.text = "High Score :    " + score.ToString();
-                    congratulationText.gameObject.SetActive(true);
+                    GameOverhighscoreText.text = score.ToString();
 
                 }
                 else
                 {
-                    GameOverhighscoreText.text = "High Score :    " + d.high_score.ToString();
+                    GameOverhighscoreText.text =d.high_score.ToString();
                 }
 
             }
